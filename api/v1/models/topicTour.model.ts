@@ -9,7 +9,9 @@ const topicTourSchema = new Schema(
     thumbnail: String,
     description: String,
     tourCategoryId: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "TourCategory",
+      required: true,
     },
     deleted: {
       type: Boolean,

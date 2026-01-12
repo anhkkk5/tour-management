@@ -29,6 +29,20 @@ paths:
                   message:
                     type: string
                     example: Danh sách chuyến đi
+  /api/v1/tour_category:
+    get:
+      tags:
+        - TourCategories
+      summary: Danh sách tour category
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
   /api/v1/topicTours:
     get:
       tags:
@@ -45,14 +59,14 @@ paths:
                   message:
                     type: string
                     example: Danh sách chủ đề du lịch
-  /api/v1/tour_category/{slugTourCategory}:
+  /api/v1/tour_category/{slugTopicTour}:
     get:
       tags:
         - TopicTours
       summary: Danh sách chủ đề du lịch theo tour category (slug)
       parameters:
         - in: path
-          name: slugTourCategory
+          name: slugTopicTour
           required: true
           schema:
             type: string
@@ -68,3 +82,32 @@ paths:
                   type: object
         "404":
           description: Tour category not found
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}:
+    get:
+      tags:
+        - Tours
+      summary: Danh sách tour theo topic (slug)
+      parameters:
+        - in: path
+          name: slugTopicTour
+          required: true
+          schema:
+            type: string
+          description: Slug của TourCategory cha (ví dụ tour-quoc-te)
+        - in: path
+          name: slugTour
+          required: true
+          schema:
+            type: string
+          description: Slug của TopicTour (ví dụ du-lich-chau-au)
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        "404":
+          description: Topic tour not found

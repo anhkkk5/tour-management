@@ -1,44 +1,74 @@
 import { Request, Response } from "express";
-import tourCategoryModel from "../models/tourCategory.model";
-import TopicTour from "../models/topicTour.model";
+import * as tourCategoryService from "../services/tourCategory.service";
 // [Get] api/v1/tourCategories
 export const index = async (req: Request, res: Response) => {
-  const tourCategories = await tourCategoryModel.find({
-    deleted: false,
-  });
-  res.json(tourCategories);
+  const tourCategories = await tourCategoryService.listTourCategories();
+  return res.json(tourCategories);
 };
-// [Get] api/v1/tourCategories/:slugTourCategory
+// [Get] api/v1/tourCategories/:slugTopicTour
 export const listTourCategory = async (req: Request, res: Response) => {
-  const tourCategory = await tourCategoryModel.findOne({
-    deleted: false,
-    slug: req.params.slugTourCategory,
-  });
+  const slugTopicTourRaw = req.params.slugTopicTour;
+  const slugTopicTour = Array.isArray(slugTopicTourRaw)
+    ? slugTopicTourRaw[0]
+    : slugTopicTourRaw;
 
-  if (!tourCategory) {
+  if (!slugTopicTour) {
+    return res.status(400).json({
+      message: "Missing slugTopicTour param",
+    });
+  }
+
+  const result = await tourCategoryService.getTopicToursByCategorySlug(
+    slugTopicTour
+  );
+
+  if (result.kind === "category_not_found") {
     return res.status(404).json({
       message: "Tour category not found",
     });
   }
 
-  const categoryIdStr = tourCategory._id.toString();
+  return res.json(result.topicTours);
+};
 
-  const listTopicTour = await TopicTour.find({
-    deleted: false,
-    tourCategoryId: categoryIdStr,
-  });
+// [Get] api/v1/tourCategories/:slugTopicTour/:slugTour
+export const listTourTopic = async (req: Request, res: Response) => {
+  const slugTopicTourRaw = req.params.slugTopicTour;
+  const slugTourRaw = req.params.slugTour;
 
-  if (listTopicTour.length > 0) {
-    return res.json(listTopicTour);
+  const slugTopicTour = Array.isArray(slugTopicTourRaw)
+    ? slugTopicTourRaw[0]
+    : slugTopicTourRaw;
+  const slugTour = Array.isArray(slugTourRaw) ? slugTourRaw[0] : slugTourRaw;
+
+  if (!slugTopicTour) {
+    return res.status(400).json({
+      message: "Missing slugTopicTour param",
+    });
   }
 
-  // Fallback for legacy data where topicTours.tourCategoryId was stored as an ObjectId
-  const listTopicTourFromObjectId = await TopicTour.collection
-    .find({
-      deleted: false,
-      tourCategoryId: tourCategory._id,
-    })
-    .toArray();
+  if (!slugTour) {
+    return res.status(400).json({
+      message: "Missing slugTour param",
+    });
+  }
 
-  return res.json(listTopicTourFromObjectId);
+  const result = await tourCategoryService.getToursByCategorySlugAndTopicSlug(
+    slugTopicTour,
+    slugTour
+  );
+
+  if (result.kind === "category_not_found") {
+    return res.status(404).json({
+      message: "Tour category not found",
+    });
+  }
+
+  if (result.kind === "topic_not_found") {
+    return res.status(404).json({
+      message: "Topic tour not found",
+    });
+  }
+
+  return res.json(result.tours);
 };

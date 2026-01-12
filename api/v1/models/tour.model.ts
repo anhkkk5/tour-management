@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+const slug = require("mongoose-slug-updater");
 
+mongoose.plugin(slug);
 const tourSchema = new Schema(
   {
     title: { type: String, required: true },
@@ -8,6 +10,7 @@ const tourSchema = new Schema(
     description: String,
     topicTourId: { type: Schema.Types.ObjectId, ref: "TopicTour" },
     location: String,
+    transportation: String,
     deleted: {
       type: Boolean,
       default: false,
