@@ -1,0 +1,31 @@
+openapi: 3.0.0
+info:
+  title: AI-Trip Co-Pilot API Documentation
+  version: 1.0.0
+  description: Tài liệu API cho dự án lên kế hoạch du lịch thông minh kết hợp AI
+servers:
+  - url: http://localhost:3002
+    description: Development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /api/v1/trips:
+    get:
+      tags:
+        - Trips
+      summary: Danh sách chuyến đi
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Danh sách chuyến đi
