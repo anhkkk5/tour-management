@@ -1,9 +1,8 @@
 import express, { Request, Response, Router } from "express";
+import * as tourController from "../controller/tour.controller";
 const router = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
-  res.json({ message: "Danh sách tour du lịch" });
-});
+router.get("/:slugTour", tourController.detail);
 
 const tourRouter: Router = router;
 export { tourRouter };

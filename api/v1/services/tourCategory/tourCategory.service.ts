@@ -1,6 +1,6 @@
-import tourCategoryModel from "../models/tourCategory.model";
-import TopicTour from "../models/topicTour.model";
-import Tour from "../models/tour.model";
+import tourCategoryModel from "../../models/tourCategory.model";
+import TopicTour from "../../models/topicTour.model";
+import Tour from "../../models/tour.model";
 // [Get] api/v1/tourCategories
 export const listTourCategories = async () => {
   return tourCategoryModel.find({
@@ -23,9 +23,23 @@ export const getTopicToursByCategorySlug = async (categorySlug: string) => {
     tourCategoryId: tourCategory._id,
   });
 
+  if (topicTours.length > 0) {
+    return {
+      kind: "ok" as const,
+      topicTours,
+    };
+  }
+
+  const topicToursFromString = await TopicTour.collection
+    .find({
+      deleted: false,
+      tourCategoryId: tourCategory._id.toString(),
+    })
+    .toArray();
+
   return {
     kind: "ok" as const,
-    topicTours,
+    topicTours: topicToursFromString,
   };
 };
 
@@ -52,7 +66,27 @@ export const getToursByCategorySlugAndTopicSlug = async (
   });
 
   if (!topicTour) {
-    return { kind: "topic_not_found" as const };
+    const topicTourFromString = await TopicTour.collection.findOne({
+      deleted: false,
+      slug: topicSlug,
+      tourCategoryId: tourCategory._id.toString(),
+    });
+
+    if (!topicTourFromString) {
+      return { kind: "topic_not_found" as const };
+    }
+
+    const toursFromStringTopic = await Tour.collection
+      .find({
+        deleted: false,
+        topicTourId: topicTourFromString._id.toString(),
+      })
+      .toArray();
+
+    return {
+      kind: "ok" as const,
+      tours: toursFromStringTopic,
+    };
   }
 
   // 3. Lấy tours
@@ -61,8 +95,22 @@ export const getToursByCategorySlugAndTopicSlug = async (
     topicTourId: topicTour._id,
   });
 
+  if (tours.length > 0) {
+    return {
+      kind: "ok" as const,
+      tours,
+    };
+  }
+
+  const toursFromString = await Tour.collection
+    .find({
+      deleted: false,
+      topicTourId: topicTour._id.toString(),
+    })
+    .toArray();
+
   return {
     kind: "ok" as const,
-    tours,
+    tours: toursFromString,
   };
 };

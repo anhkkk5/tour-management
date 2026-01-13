@@ -1,9 +1,12 @@
 import { Request, Response } from "express";
-import * as tourCategoryService from "../services/tourCategory.service";
+import * as tourCategoryService from "../services/tourCategory/tourCategory.service";
 // [Get] api/v1/tourCategories
 export const index = async (req: Request, res: Response) => {
   const tourCategories = await tourCategoryService.listTourCategories();
-  return res.json(tourCategories);
+  return res.json({
+    code: 200,
+    data: tourCategories,
+  });
 };
 // [Get] api/v1/tourCategories/:slugTopicTour
 export const listTourCategory = async (req: Request, res: Response) => {
@@ -28,7 +31,10 @@ export const listTourCategory = async (req: Request, res: Response) => {
     });
   }
 
-  return res.json(result.topicTours);
+  return res.json({
+    code: 200,
+    data: result.topicTours,
+  });
 };
 
 // [Get] api/v1/tourCategories/:slugTopicTour/:slugTour
@@ -70,5 +76,8 @@ export const listTourTopic = async (req: Request, res: Response) => {
     });
   }
 
-  return res.json(result.tours);
+  return res.json({
+    code: 200,
+    data: result.tours,
+  });
 };
