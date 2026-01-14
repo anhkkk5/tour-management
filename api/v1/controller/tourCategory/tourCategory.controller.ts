@@ -6,6 +6,7 @@ import {
   updateTourCategory,
 } from "./tourCategory.root.controller";
 import {
+  bulkUpdateTopicTours,
   createTopicTour,
   listTourTopic,
   updateTopicTour,
@@ -20,6 +21,7 @@ export {
   deleteTourCategory,
   listTourTopic,
   createTopicTour,
+  bulkUpdateTopicTours,
   listTour,
   updateTopicTour,
 };

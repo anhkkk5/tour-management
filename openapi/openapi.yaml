@@ -29,6 +29,8 @@ paths:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1create
   /api/v1/tour_category/{slugTopicTour}/edit/{id}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1edit~1{id}
+  /api/v1/tour_category/{slugTopicTour}/bulk:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1bulk
   /api/v1/tour_category/{slugTopicTour}/{slugTour}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}
   /api/v1/topicTours:

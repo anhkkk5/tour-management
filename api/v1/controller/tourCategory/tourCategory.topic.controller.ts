@@ -115,3 +115,35 @@ export const updateTopicTour = async (req: Request, res: Response) => {
 };
 
 // [Patch] api/v1/tour_category/:slugTopicTour/bulk
+export const bulkUpdateTopicTours = async (req: Request, res: Response) => {
+  try {
+    const slugTopicTour = getParamString(req, "slugTopicTour");
+
+    if (!slugTopicTour) {
+      return sendError(res, 400, "Missing slugTopicTour param");
+    }
+
+    const result = await tourCategoryService.bulkUpdateTopicToursById(
+      slugTopicTour,
+      {
+        updates: req.body?.updates,
+      }
+    );
+
+    if (result.kind === "category_not_found") {
+      return sendError(res, 404, "Tour category not found");
+    }
+
+    if (result.kind === "validation_error") {
+      return sendError(res, 400, result.message);
+    }
+
+    return res.json({
+      code: 200,
+      message: "Cập nhật topic tour hàng loạt thành công",
+      data: result.results,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Lỗi khi cập nhật topic tour hàng loạt!");
+  }
+};

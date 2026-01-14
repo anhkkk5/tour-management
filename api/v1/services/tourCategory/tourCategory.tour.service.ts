@@ -142,6 +142,55 @@ export const updateTopicTourById = async (
   }
 };
 
+export const bulkUpdateTopicToursById = async (
+  categorySlug: string,
+  payload: {
+    updates?: Array<{
+      id?: string;
+      title?: string;
+      thumbnail?: string;
+      description?: string;
+    }>;
+  }
+) => {
+  if (!Array.isArray(payload?.updates) || payload.updates.length === 0) {
+    return {
+      kind: "validation_error" as const,
+      message: "Missing updates",
+    };
+  }
+
+  const tourCategory = await tourCategoryModel.findOne({
+    deleted: false,
+    slug: categorySlug,
+  });
+
+  if (!tourCategory) {
+    return { kind: "category_not_found" as const };
+  }
+
+  const results = await Promise.all(
+    payload.updates.map(async (u) => {
+      if (!u?.id) {
+        return { id: u?.id ?? null, kind: "validation_error" as const };
+      }
+
+      const result = await updateTopicTourById(categorySlug, u.id, {
+        title: u.title,
+        thumbnail: u.thumbnail,
+        description: u.description,
+      });
+
+      return { id: u.id, ...result };
+    })
+  );
+
+  return {
+    kind: "ok" as const,
+    results,
+  };
+};
+
 // [Patch] api/v1/tourCategories/:slugTopicTour/:slugTour
 export const updateTopicTour = async (
   categorySlug: string,

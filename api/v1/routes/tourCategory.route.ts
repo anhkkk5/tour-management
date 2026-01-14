@@ -18,7 +18,10 @@ router.patch(
   "/:slugTopicTour/edit/:id",
   tourCategoriesController.updateTopicTour
 );
-
+router.patch(
+  "/:slugTopicTour/bulk",
+  tourCategoriesController.bulkUpdateTopicTours
+);
 //end topic
 
 //tour

@@ -11,6 +11,7 @@ import {
 } from "./tourCategory.topic.service";
 import {
   getToursByCategorySlugAndTopicSlug,
+  bulkUpdateTopicToursById,
   updateTopicTourById,
   updateTopicTour,
 } from "./tourCategory.tour.service";
@@ -24,6 +25,7 @@ export {
   getTopicToursByCategorySlug,
   getToursByCategorySlugAndTopicSlug,
   createTopicTour,
+  bulkUpdateTopicToursById,
   updateTopicTourById,
   updateTopicTour,
 };
