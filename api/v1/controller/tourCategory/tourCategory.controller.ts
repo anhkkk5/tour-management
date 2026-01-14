@@ -1,15 +1,25 @@
-import { createTourCategory, index } from "./tourCategory.root.controller";
+import {
+  bulkUpdateTourCategories,
+  createTourCategory,
+  deleteTourCategory,
+  index,
+  updateTourCategory,
+} from "./tourCategory.root.controller";
 import {
   createTopicTour,
-  listTourCategory,
+  listTourTopic,
+  updateTopicTour,
 } from "./tourCategory.topic.controller";
-import { listTourTopic, updateTopicTour } from "./tourCategory.tour.controller";
+import { listTour } from "./tourCategory.tour.controller";
 
 export {
   index,
   createTourCategory,
-  listTourCategory,
-  createTopicTour,
+  updateTourCategory,
+  bulkUpdateTourCategories,
+  deleteTourCategory,
   listTourTopic,
+  createTopicTour,
+  listTour,
   updateTopicTour,
 };
