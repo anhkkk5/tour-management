@@ -7,6 +7,36 @@ export const listTourCategories = async () => {
     deleted: false,
   });
 };
+
+// [Post] api/v1/tour_category/create
+export const createTourCategory = async (payload: {
+  title?: string;
+  thumbnail?: string;
+  description?: string;
+}) => {
+  if (!payload?.title) {
+    return { kind: "validation_error" as const, message: "Missing title" };
+  }
+
+  const tourCategory = new tourCategoryModel({
+    title: payload.title,
+    thumbnail: payload.thumbnail,
+    description: payload.description,
+  });
+
+  try {
+    const data = await tourCategory.save();
+    return {
+      kind: "ok" as const,
+      tourCategory: data,
+    };
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      return { kind: "duplicate_slug" as const };
+    }
+    throw error;
+  }
+};
 // [Get] api/v1/tourCategories/:slugTopicTour
 export const getTopicToursByCategorySlug = async (categorySlug: string) => {
   const tourCategory = await tourCategoryModel.findOne({
@@ -114,3 +144,108 @@ export const getToursByCategorySlugAndTopicSlug = async (
     tours: toursFromString,
   };
 };
+
+//[Post] api/v1/tourCategories/:slugTopicTour/create
+export const createTopicTour = async (
+  categorySlug: string,
+  payload: {
+    title?: string;
+    thumbnail?: string;
+    description?: string;
+  }
+) => {
+  const tourCategory = await tourCategoryModel.findOne({
+    deleted: false,
+    slug: categorySlug,
+  });
+
+  if (!tourCategory) {
+    return { kind: "category_not_found" as const };
+  }
+
+  if (!payload?.title) {
+    return { kind: "validation_error" as const, message: "Missing title" };
+  }
+
+  const topicTour = new TopicTour({
+    title: payload.title,
+    thumbnail: payload.thumbnail,
+    description: payload.description,
+    tourCategoryId: tourCategory._id,
+  });
+
+  const data = await topicTour.save();
+
+  return {
+    kind: "ok" as const,
+    topicTour: data,
+  };
+};
+
+// [Patch] api/v1/tourCategories/:slugTopicTour/:slugTour
+export const updateTopicTour = async (
+  categorySlug: string,
+  topicSlug: string,
+  payload: {
+    title?: string;
+    thumbnail?: string;
+    description?: string;
+  }
+) => {
+  const tourCategory = await tourCategoryModel.findOne({
+    deleted: false,
+    slug: categorySlug,
+  });
+
+  if (!tourCategory) {
+    return { kind: "category_not_found" as const };
+  }
+
+  let topicTour = await TopicTour.findOne({
+    deleted: false,
+    slug: topicSlug,
+    tourCategoryId: tourCategory._id,
+  });
+
+  if (!topicTour) {
+    const topicTourFromString = await TopicTour.collection.findOne({
+      deleted: false,
+      slug: topicSlug,
+      tourCategoryId: tourCategory._id.toString(),
+    });
+
+    if (!topicTourFromString?._id) {
+      return { kind: "topic_not_found" as const };
+    }
+
+    topicTour = await TopicTour.findById(topicTourFromString._id);
+  }
+
+  if (!topicTour) {
+    return { kind: "topic_not_found" as const };
+  }
+
+  if (payload?.title !== undefined && !payload.title) {
+    return { kind: "validation_error" as const, message: "Missing title" };
+  }
+
+  if (payload?.title !== undefined) topicTour.title = payload.title;
+  if (payload?.thumbnail !== undefined) topicTour.thumbnail = payload.thumbnail;
+  if (payload?.description !== undefined)
+    topicTour.description = payload.description;
+
+  try {
+    const data = await topicTour.save();
+    return {
+      kind: "ok" as const,
+      topicTour: data,
+    };
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      return { kind: "duplicate_slug" as const };
+    }
+    throw error;
+  }
+};
+
+//

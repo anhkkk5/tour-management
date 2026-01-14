@@ -3,6 +3,7 @@ import { loadTourRelations } from "./tour.relation.service";
 import { getTourSchedules } from "./tour.schedule.service";
 import { getTourPolicy } from "./tour.policy.service";
 
+// [Get] api/v1/tour/:slugTour
 export const getTourDetailBySlug = async (slug: string) => {
   const tour = await Tour.findOne({ deleted: false, slug });
 

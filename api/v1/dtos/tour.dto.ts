@@ -48,8 +48,19 @@ export const toTourDetailDTO = (result: any) => {
       schedules: schedules.map((s) => ({
         startDate: s?.startDate ?? null,
         endDate: s?.endDate ?? null,
-        price: s?.price ?? null,
-        availableSeats: s?.availableSeats ?? null,
+        capacity: s?.capacity ?? null,
+        bookedSeats: s?.bookedSeats ?? null,
+        prices: s?.prices ?? null,
+        bookingDeadline: s?.bookingDeadline ?? null,
+        notes: s?.notes ?? null,
+        deleted: s?.deleted ?? null,
+        createdAt: s?.createdAt ?? null,
+        updatedAt: s?.updatedAt ?? null,
+        availableSeats:
+          s?.availableSeats ??
+          (typeof s?.capacity === "number" && typeof s?.bookedSeats === "number"
+            ? s.capacity - s.bookedSeats
+            : null),
         status: s?.status,
       })),
       policy: policy
