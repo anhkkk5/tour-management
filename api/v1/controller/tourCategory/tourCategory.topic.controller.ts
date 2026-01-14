@@ -113,3 +113,5 @@ export const updateTopicTour = async (req: Request, res: Response) => {
     return sendError(res, 500, "Lỗi khi cập nhật topic tour!");
   }
 };
+
+// [Patch] api/v1/tour_category/:slugTopicTour/bulk

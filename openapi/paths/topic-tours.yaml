@@ -1,0 +1,16 @@
+/api/v1/topicTours:
+  get:
+    tags:
+      - TopicTours
+    summary: Danh sách chủ đề du lịch
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Danh sách chủ đề du lịch

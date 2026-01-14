@@ -1,0 +1,22 @@
+/api/v1/trips:
+  $ref: ./trips.yaml#/api/v1/trips
+/api/v1/tour_category:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category
+/api/v1/tour_category/create:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/create
+/api/v1/tour_category/edit/{id}:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/edit/{id}
+/api/v1/tour_category/delete/{id}:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/delete/{id}
+/api/v1/tour_category/bulk:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/bulk
+/api/v1/tour_category/{slugTopicTour}:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/{slugTopicTour}
+/api/v1/tour_category/{slugTopicTour}/create:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/{slugTopicTour}/create
+/api/v1/tour_category/{slugTopicTour}/edit/{id}:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/{slugTopicTour}/edit/{id}
+/api/v1/tour_category/{slugTopicTour}/{slugTour}:
+  $ref: ./tour-categories.yaml#/api/v1/tour_category/{slugTopicTour}/{slugTour}
+/api/v1/topicTours:
+  $ref: ./topic-tours.yaml#/api/v1/topicTours

@@ -1,0 +1,16 @@
+/api/v1/trips:
+  get:
+    tags:
+      - Trips
+    summary: Danh sách chuyến đi
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Danh sách chuyến đi

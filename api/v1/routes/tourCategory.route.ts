@@ -18,6 +18,7 @@ router.patch(
   "/:slugTopicTour/edit/:id",
   tourCategoriesController.updateTopicTour
 );
+
 //end topic
 
 //tour
