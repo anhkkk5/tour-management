@@ -106,11 +106,12 @@ tourScheduleSchema.virtual("availableSeats").get(function () {
 });
 
 // 🔁 Tự động cập nhật status
-(tourScheduleSchema as any).pre("save", function (this: any, next: any) {
-  if (this.bookedSeats >= this.capacity) {
-    this.status = "full";
+(tourScheduleSchema as any).pre("save", async function(this: any) {
+  if (this.capacity && this.bookedSeats !== undefined) {
+    if (this.bookedSeats >= this.capacity) {
+      this.status = "full";
+    }
   }
-  next();
 });
 
 const TourSchedule = mongoose.model<ITourSchedule>(

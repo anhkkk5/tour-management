@@ -38,6 +38,7 @@ export const createTourCategory = async (payload: {
   }
 };
 
+// [Patch] api/v1/tour_category/edit/{id}
 export const updateTourCategoryById = async (
   id: string,
   payload: {
@@ -83,6 +84,7 @@ export const updateTourCategoryById = async (
   }
 };
 
+// [Patch] api/v1/tour_category/bulk
 export const bulkUpdateTourCategoriesById = async (payload: {
   updates?: Array<{
     id?: string;
@@ -120,6 +122,7 @@ export const bulkUpdateTourCategoriesById = async (payload: {
   };
 };
 
+// [Patch] api/v1/tour_category/delete/{id}
 export const softDeleteTourCategoryById = async (id: string) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return { kind: "invalid_id" as const };
@@ -142,5 +145,62 @@ export const softDeleteTourCategoryById = async (id: string) => {
   return {
     kind: "ok" as const,
     tourCategory: data,
+  };
+};
+
+// [Get] api/v1/tour_category/deleted
+export const getDeletedTourCategories = async () => {
+  return tourCategoryModel.find({
+    deleted: true,
+  });
+};
+
+// [Patch] api/v1/tour_category/restore/{id}
+export const restoreTourCategoryById = async (id: string) => {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return { kind: "invalid_id" as const };
+  }
+
+  const tourCategory = await tourCategoryModel.findOne({
+    _id: id,
+    deleted: true,
+  });
+
+  if (!tourCategory) {
+    return { kind: "not_found" as const };
+  }
+
+  tourCategory.deleted = false;
+  tourCategory.deleteAt = undefined;
+
+  const data = await tourCategory.save();
+
+  return {
+    kind: "ok" as const,
+    tourCategory: data,
+  };
+};
+
+// [Patch] api/v1/tour_category/restore/bulk
+export const bulkRestoreTourCategoriesById = async (payload: {
+  ids?: string[];
+}) => {
+  if (!Array.isArray(payload?.ids) || payload.ids.length === 0) {
+    return {
+      kind: "validation_error" as const,
+      message: "Missing ids",
+    };
+  }
+
+  const results = await Promise.all(
+    payload.ids.map(async (id) => {
+      const result = await restoreTourCategoryById(id);
+      return { id, ...result };
+    })
+  );
+
+  return {
+    kind: "ok" as const,
+    results,
   };
 };

@@ -1,0 +1,219 @@
+/api/v1/locations:
+  get:
+    tags:
+      - Locations
+    summary: Danh sách locations
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: array
+                  items:
+                    type: object
+
+/api/v1/locations/deleted:
+  get:
+    tags:
+      - Locations
+    summary: Danh sách locations đã xóa mềm
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: array
+                  items:
+                    type: object
+
+/api/v1/locations/{id}:
+  get:
+    tags:
+      - Locations
+    summary: Chi tiết location theo id
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: object
+      "400":
+        description: Invalid id
+      "404":
+        description: Location not found
+
+/api/v1/locations/create:
+  post:
+    tags:
+      - Locations
+    summary: Tạo location
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - type
+            properties:
+              name:
+                type: string
+                example: Hà Nội
+              type:
+                type: string
+                example: domestic
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Tạo location thành công
+                data:
+                  type: object
+      "400":
+        description: Validation error
+      "409":
+        description: Duplicate slug
+
+/api/v1/locations/edit/{id}:
+  patch:
+    tags:
+      - Locations
+    summary: Cập nhật location
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: TP HCM
+              type:
+                type: string
+                example: international
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Cập nhật location thành công
+                data:
+                  type: object
+      "400":
+        description: Validation error
+      "404":
+        description: Location not found
+      "409":
+        description: Duplicate slug
+
+/api/v1/locations/delete/{id}:
+  patch:
+    tags:
+      - Locations
+    summary: Xóa mềm location
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Xóa location thành công
+                data:
+                  type: object
+      "404":
+        description: Location not found
+
+/api/v1/locations/restore/{id}:
+  patch:
+    tags:
+      - Locations
+    summary: Khôi phục location đã xóa mềm
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Khôi phục location thành công
+                data:
+                  type: object
+      "404":
+        description: Location not found

@@ -130,3 +130,65 @@ export const deleteTourCategory = async (req: Request, res: Response) => {
     return sendError(res, 500, "Lỗi khi xóa tour category!");
   }
 };
+
+export const listDeletedTourCategories = async (
+  req: Request,
+  res: Response
+) => {
+  const tourCategories = await tourCategoryService.getDeletedTourCategories();
+  return res.json({
+    code: 200,
+    data: tourCategories,
+  });
+};
+
+export const restoreTourCategory = async (req: Request, res: Response) => {
+  try {
+    const id = getParamString(req, "id");
+
+    if (!id) {
+      return sendError(res, 400, "Missing id param");
+    }
+
+    const result = await tourCategoryService.restoreTourCategoryById(id);
+
+    if (result.kind === "invalid_id") {
+      return sendError(res, 400, "Invalid id");
+    }
+
+    if (result.kind === "not_found") {
+      return sendError(res, 404, "Tour category not found");
+    }
+
+    return res.json({
+      code: 200,
+      message: "Khôi phục tour category thành công",
+      data: result.tourCategory,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Lỗi khi khôi phục tour category!");
+  }
+};
+
+export const bulkRestoreTourCategories = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const result = await tourCategoryService.bulkRestoreTourCategoriesById({
+      ids: req.body?.ids,
+    });
+
+    if (result.kind === "validation_error") {
+      return sendError(res, 400, result.message);
+    }
+
+    return res.json({
+      code: 200,
+      message: "Khôi phục tour category hàng loạt thành công",
+      data: result.results,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Lỗi khi khôi phục tour category hàng loạt!");
+  }
+};

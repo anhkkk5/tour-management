@@ -11,27 +11,87 @@ components:
     bearerAuth:
       $ref: ./components/securitySchemes/bearerAuth.yaml
 paths:
+  /api/v1/locations:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations
+  /api/v1/locations/deleted:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations~1deleted
+  /api/v1/locations/create:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations~1create
+  /api/v1/locations/edit/{id}:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations~1edit~1{id}
+  /api/v1/locations/delete/{id}:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations~1delete~1{id}
+  /api/v1/locations/restore/{id}:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations~1restore~1{id}
+  /api/v1/locations/{id}:
+    $ref: ./paths/locations.yaml#/~1api~1v1~1locations~1{id}
+
+  /api/v1/tours/edit/{id}:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1edit~1{id}
+  /api/v1/tours/{slugTour}:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1{slugTour}
+  /api/v1/tours/policies:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1policies
+  /api/v1/tours/policies/{id}:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1policies~1{id}
+  /api/v1/tours/{tourId}/schedules:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1{tourId}~1schedules
+  /api/v1/tours/schedules/{id}:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1schedules~1{id}
+  /api/v1/tours/schedules/delete/{id}:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1schedules~1delete~1{id}
+  /api/v1/tours/schedules/restore/{id}:
+    $ref: ./paths/tours.yaml#/~1api~1v1~1tours~1schedules~1restore~1{id}
+
   /api/v1/trips:
     $ref: ./paths/trips.yaml#/~1api~1v1~1trips
   /api/v1/tour_category:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category
+  /api/v1/tour_category/deleted:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1deleted
   /api/v1/tour_category/create:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1create
   /api/v1/tour_category/edit/{id}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1edit~1{id}
   /api/v1/tour_category/delete/{id}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1delete~1{id}
+  /api/v1/tour_category/restore/{id}:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1restore~1{id}
+  /api/v1/tour_category/restore/bulk:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1restore~1bulk
   /api/v1/tour_category/bulk:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1bulk
   /api/v1/tour_category/{slugTopicTour}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}
+  /api/v1/tour_category/{slugTopicTour}/deleted:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1deleted
   /api/v1/tour_category/{slugTopicTour}/create:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1create
   /api/v1/tour_category/{slugTopicTour}/edit/{id}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1edit~1{id}
+  /api/v1/tour_category/{slugTopicTour}/restore/{id}:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1restore~1{id}
+  /api/v1/tour_category/{slugTopicTour}/restore/bulk:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1restore~1bulk
+  /api/v1/tour_category/{slugTopicTour}/delete/{id}:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1delete~1{id}
   /api/v1/tour_category/{slugTopicTour}/bulk:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1bulk
   /api/v1/tour_category/{slugTopicTour}/{slugTour}:
     $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/deleted:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1deleted
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/create:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1create
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/edit/{id}:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1edit~1{id}
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/bulk:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1bulk
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/delete/{id}:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1delete~1{id}
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/restore/{id}:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1restore~1{id}
+  /api/v1/tour_category/{slugTopicTour}/{slugTour}/restore/bulk:
+    $ref: ./paths/tour-categories.yaml#/~1api~1v1~1tour_category~1{slugTopicTour}~1{slugTour}~1restore~1bulk
   /api/v1/topicTours:
     $ref: ./paths/topic-tours.yaml#/~1api~1v1~1topicTours

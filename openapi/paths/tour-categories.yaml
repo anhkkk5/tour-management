@@ -19,6 +19,27 @@
                   items:
                     type: object
 
+/api/v1/tour_category/deleted:
+  get:
+    tags:
+      - TourCategories
+    summary: Danh sách tour category đã xóa mềm
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: array
+                  items:
+                    type: object
+
 /api/v1/tour_category/create:
   post:
     tags:
@@ -62,6 +83,79 @@
         description: Validation error
       "409":
         description: Duplicate slug
+
+/api/v1/tour_category/restore/{id}:
+  patch:
+    tags:
+      - TourCategories
+    summary: Khôi phục tour category đã xóa mềm theo id
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Id của TourCategory
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Khôi phục tour category thành công
+                data:
+                  type: object
+      "400":
+        description: Invalid id
+      "404":
+        description: Tour category not found
+
+/api/v1/tour_category/restore/bulk:
+  patch:
+    tags:
+      - TourCategories
+    summary: Khôi phục tour category đã xóa mềm hàng loạt theo ids
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - ids
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+                  example: 6965108a3d85b8bec3471c36
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Khôi phục tour category hàng loạt thành công
+                data:
+                  type: array
+                  items:
+                    type: object
+      "400":
+        description: Validation error
 
 /api/v1/tour_category/{slugTopicTour}/bulk:
   patch:
@@ -120,6 +214,36 @@
                     type: object
       "400":
         description: Validation error
+      "404":
+        description: Tour category not found
+
+/api/v1/tour_category/{slugTopicTour}/deleted:
+  get:
+    tags:
+      - TopicTours
+    summary: Danh sách topic tour đã xóa mềm theo tour category (slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TourCategory cha
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: array
+                  items:
+                    type: object
       "404":
         description: Tour category not found
 
@@ -388,6 +512,133 @@
       "409":
         description: Duplicate slug
 
+/api/v1/tour_category/{slugTopicTour}/restore/{id}:
+  patch:
+    tags:
+      - TopicTours
+    summary: Khôi phục topic tour đã xóa mềm theo id (thuộc tour category slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TourCategory cha
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Id của TopicTour
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Khôi phục topic tour thành công
+                data:
+                  type: object
+      "400":
+        description: Invalid id
+      "404":
+        description: Tour category or topic tour not found
+
+/api/v1/tour_category/{slugTopicTour}/restore/bulk:
+  patch:
+    tags:
+      - TopicTours
+    summary: Khôi phục topic tour đã xóa mềm hàng loạt theo ids (thuộc tour category slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TourCategory cha
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - ids
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+                  example: 6965108a3d85b8bec3471c36
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Khôi phục topic tour hàng loạt thành công
+                data:
+                  type: array
+                  items:
+                    type: object
+      "400":
+        description: Validation error
+      "404":
+        description: Tour category not found
+
+/api/v1/tour_category/{slugTopicTour}/delete/{id}:
+  patch:
+    tags:
+      - TopicTours
+    summary: Xóa mềm topic tour theo id (thuộc tour category slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TourCategory cha
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Id của TopicTour
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Xóa topic tour thành công
+                data:
+                  type: object
+      "400":
+        description: Invalid id
+      "404":
+        description: Tour category or topic tour not found
+
 /api/v1/tour_category/{slugTopicTour}/{slugTour}:
   get:
     tags:
@@ -423,3 +674,379 @@
                     type: object
       "404":
         description: Topic tour not found
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/deleted:
+  get:
+    tags:
+      - Tours
+    summary: Danh sách tour đã xóa mềm theo topic (slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TourCategory cha
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TopicTour
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: array
+                  items:
+                    type: object
+      "404":
+        description: Tour category or topic tour not found
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/create:
+  post:
+    tags:
+      - Tours
+    summary: Tạo tour theo topic (slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TourCategory cha
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+        description: Slug của TopicTour
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - title
+              - thumbnail
+              - description
+              - departureId
+              - destinationIds
+              - durationDays
+              - startSchedule
+              - price
+              - availableSeats
+              - transportation
+              - itinerary
+            properties:
+              title:
+                type: string
+                example: Tour Đà Nẵng 3N2Đ
+              thumbnail:
+                type: string
+                example: https://picsum.photos/seed/tour1/900/600
+              images:
+                type: array
+                items:
+                  type: string
+                example:
+                  - https://picsum.photos/seed/tour1a/900/600
+                  - https://picsum.photos/seed/tour1b/900/600
+              description:
+                type: string
+                example: Trải nghiệm Bà Nà Hills, Cầu Vàng, biển Mỹ Khê.
+              departureId:
+                type: string
+                description: ObjectId của Location (nơi khởi hành)
+                example: 696bc2cd9f257af89aee8372
+              destinationIds:
+                type: array
+                description: Danh sách ObjectId của Location (điểm đến)
+                items:
+                  type: string
+                example:
+                  - 6966c8c82b3df35a772d5ec06
+                  - 6966c8cb3df35a772d5ec08
+              durationDays:
+                type: number
+                example: 3
+              startSchedule:
+                type: string
+                example: Khởi hành thứ 6 hàng tuần
+              price:
+                type: number
+                example: 3990000
+              availableSeats:
+                type: number
+                example: 20
+              transportation:
+                type: string
+                example: Xe du lịch
+              itinerary:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    day:
+                      type: number
+                    title:
+                      type: string
+                    content:
+                      type: string
+                example:
+                  - day: 1
+                    title: Ngày 1
+                    content: Đón khách - tham quan
+                  - day: 2
+                    title: Ngày 2
+                    content: Bà Nà Hills
+              policyId:
+                type: string
+                nullable: true
+                description: ObjectId của TourPolicy (nếu chọn policy có sẵn)
+              policy:
+                type: object
+                nullable: true
+                description: Nếu muốn tạo policy mới kèm theo tour thì gửi object này (không gửi cùng policyId)
+                properties:
+                  includedServices:
+                    type: array
+                    items:
+                      type: string
+                  excludedServices:
+                    type: array
+                    items:
+                      type: string
+                  childPolicy:
+                    type: string
+                  cancellationPolicy:
+                    type: string
+              notes:
+                type: string
+                example: Mang theo CCCD/Passport
+              status:
+                type: string
+                enum: [draft, published, hidden]
+                description: Khi tạo mới sẽ luôn là draft (backend bỏ qua status nếu gửi lên)
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+      "404":
+        description: Tour category or topic tour not found
+      "409":
+        description: Duplicate slug
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/edit/{id}:
+  patch:
+    tags:
+      - Tours
+    summary: Cập nhật tour theo id (thuộc topic slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Id của Tour
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              thumbnail:
+                type: string
+              images:
+                type: array
+                items:
+                  type: string
+              description:
+                type: string
+              status:
+                type: string
+                enum: [draft, published, hidden]
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Invalid id / Validation error
+      "404":
+        description: Tour category / topic tour / tour not found
+      "409":
+        description: Duplicate slug
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/bulk:
+  patch:
+    tags:
+      - Tours
+    summary: Cập nhật tour hàng loạt theo id (thuộc topic slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - updates
+            properties:
+              updates:
+                type: array
+                items:
+                  type: object
+                  required:
+                    - id
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    thumbnail:
+                      type: string
+                    images:
+                      type: array
+                      items:
+                        type: string
+                    description:
+                      type: string
+                    status:
+                      type: string
+                      enum: [draft, published, hidden]
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+      "404":
+        description: Tour category or topic tour not found
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/delete/{id}:
+  patch:
+    tags:
+      - Tours
+    summary: Xóa mềm tour theo id (thuộc topic slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Id của Tour
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Invalid id
+      "404":
+        description: Tour category / topic tour / tour not found
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/restore/{id}:
+  patch:
+    tags:
+      - Tours
+    summary: Khôi phục tour đã xóa mềm theo id (thuộc topic slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        description: Id của Tour
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Invalid id
+      "404":
+        description: Tour category / topic tour / tour not found
+
+/api/v1/tour_category/{slugTopicTour}/{slugTour}/restore/bulk:
+  patch:
+    tags:
+      - Tours
+    summary: Khôi phục tour đã xóa mềm hàng loạt theo ids (thuộc topic slug)
+    parameters:
+      - in: path
+        name: slugTopicTour
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - ids
+            properties:
+              ids:
+                type: array
+                items:
+                  type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+      "404":
+        description: Tour category or topic tour not found

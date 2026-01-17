@@ -1,27 +1,57 @@
 import {
   bulkUpdateTourCategories,
+  bulkRestoreTourCategories,
   createTourCategory,
   deleteTourCategory,
   index,
+  listDeletedTourCategories,
+  restoreTourCategory,
   updateTourCategory,
 } from "./tourCategory.root.controller";
 import {
+  bulkRestoreTopicTours,
   bulkUpdateTopicTours,
   createTopicTour,
+  deleteTopicTour,
+  listDeletedTopicTours,
   listTourTopic,
+  restoreTopicTour,
   updateTopicTour,
 } from "./tourCategory.topic.controller";
-import { listTour } from "./tourCategory.tour.controller";
+import {
+  bulkRestoreTours,
+  bulkUpdateTours,
+  createTour,
+  deleteTour,
+  listDeletedTours,
+  listTour,
+  restoreTour,
+  updateTour,
+} from "./tourCategory.tour.controller";
 
 export {
   index,
+  listDeletedTourCategories,
   createTourCategory,
   updateTourCategory,
   bulkUpdateTourCategories,
+  bulkRestoreTourCategories,
   deleteTourCategory,
+  restoreTourCategory,
   listTourTopic,
+  listDeletedTopicTours,
   createTopicTour,
   bulkUpdateTopicTours,
+  bulkRestoreTopicTours,
+  deleteTopicTour,
   listTour,
+  listDeletedTours,
+  createTour,
+  updateTour,
+  bulkUpdateTours,
+  deleteTour,
+  restoreTour,
+  bulkRestoreTours,
+  restoreTopicTour,
   updateTopicTour,
 };

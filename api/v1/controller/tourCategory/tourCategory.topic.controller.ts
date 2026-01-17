@@ -27,6 +27,28 @@ export const listTourTopic = async (req: Request, res: Response) => {
   });
 };
 
+// [Get] api/v1/tour_category/:slugTopicTour/deleted
+export const listDeletedTopicTours = async (req: Request, res: Response) => {
+  const slugTopicTour = getParamString(req, "slugTopicTour");
+
+  if (!slugTopicTour) {
+    return sendError(res, 400, "Missing slugTopicTour param");
+  }
+
+  const result = await tourCategoryService.getDeletedTopicToursByCategorySlug(
+    slugTopicTour
+  );
+
+  if (result.kind === "category_not_found") {
+    return sendError(res, 404, "Tour category not found");
+  }
+
+  return res.json({
+    code: 200,
+    data: result.topicTours,
+  });
+};
+
 // [Post] api/v1/tour_category/:slugTopicTour/create
 export const createTopicTour = async (req: Request, res: Response) => {
   try {
@@ -57,6 +79,81 @@ export const createTopicTour = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return sendError(res, 500, "Lỗi khi tạo topic tour!");
+  }
+};
+
+// [Patch] api/v1/tour_category/:slugTopicTour/restore/:id
+export const restoreTopicTour = async (req: Request, res: Response) => {
+  try {
+    const slugTopicTour = getParamString(req, "slugTopicTour");
+    const id = getParamString(req, "id");
+
+    if (!slugTopicTour) {
+      return sendError(res, 400, "Missing slugTopicTour param");
+    }
+
+    if (!id) {
+      return sendError(res, 400, "Missing id param");
+    }
+
+    const result = await tourCategoryService.restoreTopicTourById(
+      slugTopicTour,
+      id
+    );
+
+    if (result.kind === "invalid_id") {
+      return sendError(res, 400, "Invalid id");
+    }
+
+    if (result.kind === "category_not_found") {
+      return sendError(res, 404, "Tour category not found");
+    }
+
+    if (result.kind === "topic_not_found") {
+      return sendError(res, 404, "Topic tour not found");
+    }
+
+    return res.json({
+      code: 200,
+      message: "Khôi phục topic tour thành công",
+      data: result.topicTour,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Lỗi khi khôi phục topic tour!");
+  }
+};
+
+// [Patch] api/v1/tour_category/:slugTopicTour/restore/bulk
+export const bulkRestoreTopicTours = async (req: Request, res: Response) => {
+  try {
+    const slugTopicTour = getParamString(req, "slugTopicTour");
+
+    if (!slugTopicTour) {
+      return sendError(res, 400, "Missing slugTopicTour param");
+    }
+
+    const result = await tourCategoryService.bulkRestoreTopicToursById(
+      slugTopicTour,
+      {
+        ids: req.body?.ids,
+      }
+    );
+
+    if (result.kind === "category_not_found") {
+      return sendError(res, 404, "Tour category not found");
+    }
+
+    if (result.kind === "validation_error") {
+      return sendError(res, 400, result.message);
+    }
+
+    return res.json({
+      code: 200,
+      message: "Khôi phục topic tour hàng loạt thành công",
+      data: result.results,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Lỗi khi khôi phục topic tour hàng loạt!");
   }
 };
 
@@ -145,5 +242,46 @@ export const bulkUpdateTopicTours = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return sendError(res, 500, "Lỗi khi cập nhật topic tour hàng loạt!");
+  }
+};
+
+// [Patch] api/v1/tour_category/:slugTopicTour/delete/:id
+export const deleteTopicTour = async (req: Request, res: Response) => {
+  try {
+    const slugTopicTour = getParamString(req, "slugTopicTour");
+    const id = getParamString(req, "id");
+
+    if (!slugTopicTour) {
+      return sendError(res, 400, "Missing slugTopicTour param");
+    }
+
+    if (!id) {
+      return sendError(res, 400, "Missing id param");
+    }
+
+    const result = await tourCategoryService.softDeleteTopicTourById(
+      slugTopicTour,
+      id
+    );
+
+    if (result.kind === "invalid_id") {
+      return sendError(res, 400, "Invalid id");
+    }
+
+    if (result.kind === "category_not_found") {
+      return sendError(res, 404, "Tour category not found");
+    }
+
+    if (result.kind === "topic_not_found") {
+      return sendError(res, 404, "Topic tour not found");
+    }
+
+    return res.json({
+      code: 200,
+      message: "Xóa topic tour thành công",
+      data: result.topicTour,
+    });
+  } catch (error) {
+    return sendError(res, 500, "Lỗi khi xóa topic tour!");
   }
 };

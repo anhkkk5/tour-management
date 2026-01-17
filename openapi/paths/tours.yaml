@@ -1,0 +1,379 @@
+/api/v1/tours/edit/{id}:
+  patch:
+    tags:
+      - Tours
+    summary: Cập nhật tour (departureId, destinationIds, policyId, ...)
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              thumbnail:
+                type: string
+              images:
+                type: array
+                items:
+                  type: string
+              description:
+                type: string
+              departureId:
+                type: string
+                nullable: true
+              destinationIds:
+                type: array
+                items:
+                  type: string
+                nullable: true
+              durationDays:
+                type: number
+              startSchedule:
+                type: string
+              price:
+                type: number
+              availableSeats:
+                type: number
+              transportation:
+                type: string
+              itinerary:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    day:
+                      type: number
+                    title:
+                      type: string
+                    content:
+                      type: string
+              policyId:
+                type: string
+                nullable: true
+              notes:
+                type: string
+              status:
+                type: string
+                enum:
+                  - draft
+                  - published
+                  - hidden
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Cập nhật tour thành công
+                data:
+                  type: object
+      "400":
+        description: Validation error
+      "404":
+        description: Tour not found
+      "409":
+        description: Duplicate slug
+
+/api/v1/tours/{slugTour}:
+  get:
+    tags:
+      - Tours
+    summary: Chi tiết tour theo slug (kèm departure/destinations/schedules/policy)
+    parameters:
+      - in: path
+        name: slugTour
+        required: true
+        schema:
+          type: string
+        example: tour-da-nang-3n2d
+      - in: query
+        name: raw
+        required: false
+        schema:
+          type: boolean
+        description: Nếu true sẽ trả raw object thay vì DTO
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+      "404":
+        description: Tour not found
+
+/api/v1/tours/policies:
+  get:
+    tags:
+      - TourPolicies
+    summary: Danh sách tour policies
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                data:
+                  type: array
+                  items:
+                    type: object
+  post:
+    tags:
+      - TourPolicies
+    summary: Tạo tour policy
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              includedServices:
+                type: array
+                items:
+                  type: string
+              excludedServices:
+                type: array
+                items:
+                  type: string
+              childPolicy:
+                type: string
+              cancellationPolicy:
+                type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+
+/api/v1/tours/policies/{id}:
+  get:
+    tags:
+      - TourPolicies
+    summary: Chi tiết tour policy
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Invalid id
+      "404":
+        description: Policy not found
+  patch:
+    tags:
+      - TourPolicies
+    summary: Cập nhật tour policy
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              includedServices:
+                type: array
+                items:
+                  type: string
+              excludedServices:
+                type: array
+                items:
+                  type: string
+              childPolicy:
+                type: string
+              cancellationPolicy:
+                type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+      "404":
+        description: Policy not found
+  delete:
+    tags:
+      - TourPolicies
+    summary: Xóa tour policy
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Invalid id
+      "404":
+        description: Policy not found
+
+/api/v1/tours/{tourId}/schedules:
+  get:
+    tags:
+      - TourSchedules
+    summary: Danh sách schedules của tour
+    parameters:
+      - in: path
+        name: tourId
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+  post:
+    tags:
+      - TourSchedules
+    summary: Tạo schedule cho tour
+    parameters:
+      - in: path
+        name: tourId
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              startDate:
+                type: string
+                example: 2026-02-01
+              endDate:
+                type: string
+                example: 2026-02-10
+              capacity:
+                type: number
+                example: 20
+              prices:
+                type: object
+                example:
+                  adult: 5000000
+              status:
+                type: string
+                example: active
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+
+/api/v1/tours/schedules/{id}:
+  get:
+    tags:
+      - TourSchedules
+    summary: Chi tiết schedule
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Invalid id
+      "404":
+        description: Schedule not found
+  patch:
+    tags:
+      - TourSchedules
+    summary: Cập nhật schedule
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              startDate:
+                type: string
+              endDate:
+                type: string
+              capacity:
+                type: number
+              prices:
+                type: object
+              status:
+                type: string
+    responses:
+      "200":
+        description: OK
+      "400":
+        description: Validation error
+      "404":
+        description: Schedule not found
+
+/api/v1/tours/schedules/delete/{id}:
+  patch:
+    tags:
+      - TourSchedules
+    summary: Xóa mềm schedule
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+      "404":
+        description: Schedule not found
+
+/api/v1/tours/schedules/restore/{id}:
+  patch:
+    tags:
+      - TourSchedules
+    summary: Khôi phục schedule
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+    responses:
+      "200":
+        description: OK
+      "404":
+        description: Schedule not found
