@@ -1,4 +1,4 @@
-import TourPolicy from "../../models/tourPolicy.model";
+import TourPolicy from "../../models/tourPolicy/tourPolicy.model";
 import { toObjectIdMaybe } from "../../../../utils/mongo.util";
 
 const normalizeList = (v: unknown): string[] => {

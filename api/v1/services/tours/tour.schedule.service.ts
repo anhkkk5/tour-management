@@ -1,4 +1,4 @@
-import { TourSchedule } from "../../models/tourSchedule.model";
+import { TourSchedule } from "../../models/tourSchedule/tourSchedule.model";
 import { toObjectIdMaybe } from "../../../../utils/mongo.util";
 
 export const getTourSchedules = async (tourObj: any) => {

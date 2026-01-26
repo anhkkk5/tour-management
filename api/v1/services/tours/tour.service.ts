@@ -1,15 +1,18 @@
 import mongoose from "mongoose";
-import Tour from "../../models/tour.model";
+import Tour from "../../models/tour/tour.model";
 import { loadTourRelations } from "./tour.relation.service";
 import { getTourSchedules } from "./tour.schedule.service";
 import { getTourPolicy } from "./tour.policy.service";
 import { toObjectIdMaybe } from "../../../../utils/mongo.util";
+import { deleteFromCloudinary } from "../../../../helpers/uploadToCloudinary";
 
 // Define strict types for payload
 interface TourUpdatePayload {
   title?: string;
   thumbnail?: string;
+  thumbnailPublicId?: string;
   images?: string[];
+  imagesPublicIds?: string[];
   description?: string;
   departureId?: string | null;
   destinationIds?: string[] | null;
@@ -52,7 +55,7 @@ export const getTourDetailBySlug = async (slug: string) => {
 // [Patch] api/v1/tours/edit/:id
 export const updateTourById = async (
   id: string,
-  payload: TourUpdatePayload
+  payload: TourUpdatePayload,
 ) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return { kind: "invalid_id" as const };
@@ -69,11 +72,22 @@ export const updateTourById = async (
     return { kind: "validation_error" as const, message: "Missing title" };
   }
 
+  if (
+    payload.thumbnailPublicId !== undefined &&
+    payload.thumbnailPublicId &&
+    tour.thumbnailPublicId &&
+    payload.thumbnailPublicId !== tour.thumbnailPublicId
+  ) {
+    await deleteFromCloudinary(tour.thumbnailPublicId);
+  }
+
   // Simple fields mapping
   const simpleFields: (keyof TourUpdatePayload)[] = [
     "title",
     "thumbnail",
+    "thumbnailPublicId",
     "images",
+    "imagesPublicIds",
     "description",
     "durationDays",
     "startSchedule",

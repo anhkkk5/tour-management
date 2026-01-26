@@ -13,9 +13,8 @@ export const listTourTopic = async (req: Request, res: Response) => {
     return sendError(res, 400, "Missing slugTopicTour param");
   }
 
-  const result = await tourCategoryService.getTopicToursByCategorySlug(
-    slugTopicTour
-  );
+  const result =
+    await tourCategoryService.getTopicToursByCategorySlug(slugTopicTour);
 
   if (result.kind === "category_not_found") {
     return sendError(res, 404, "Tour category not found");
@@ -35,9 +34,8 @@ export const listDeletedTopicTours = async (req: Request, res: Response) => {
     return sendError(res, 400, "Missing slugTopicTour param");
   }
 
-  const result = await tourCategoryService.getDeletedTopicToursByCategorySlug(
-    slugTopicTour
-  );
+  const result =
+    await tourCategoryService.getDeletedTopicToursByCategorySlug(slugTopicTour);
 
   if (result.kind === "category_not_found") {
     return sendError(res, 404, "Tour category not found");
@@ -61,6 +59,7 @@ export const createTopicTour = async (req: Request, res: Response) => {
     const result = await tourCategoryService.createTopicTour(slugTopicTour, {
       title: req.body?.title,
       thumbnail: req.body?.thumbnail,
+      thumbnailPublicId: req.body?.thumbnailPublicId,
       description: req.body?.description,
     });
 
@@ -98,7 +97,7 @@ export const restoreTopicTour = async (req: Request, res: Response) => {
 
     const result = await tourCategoryService.restoreTopicTourById(
       slugTopicTour,
-      id
+      id,
     );
 
     if (result.kind === "invalid_id") {
@@ -136,7 +135,7 @@ export const bulkRestoreTopicTours = async (req: Request, res: Response) => {
       slugTopicTour,
       {
         ids: req.body?.ids,
-      }
+      },
     );
 
     if (result.kind === "category_not_found") {
@@ -177,8 +176,9 @@ export const updateTopicTour = async (req: Request, res: Response) => {
       {
         title: req.body?.title,
         thumbnail: req.body?.thumbnail,
+        thumbnailPublicId: req.body?.thumbnailPublicId,
         description: req.body?.description,
-      }
+      },
     );
 
     if (result.kind === "invalid_id") {
@@ -224,7 +224,7 @@ export const bulkUpdateTopicTours = async (req: Request, res: Response) => {
       slugTopicTour,
       {
         updates: req.body?.updates,
-      }
+      },
     );
 
     if (result.kind === "category_not_found") {
@@ -261,7 +261,7 @@ export const deleteTopicTour = async (req: Request, res: Response) => {
 
     const result = await tourCategoryService.softDeleteTopicTourById(
       slugTopicTour,
-      id
+      id,
     );
 
     if (result.kind === "invalid_id") {

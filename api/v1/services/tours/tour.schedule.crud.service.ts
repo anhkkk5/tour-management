@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { TourSchedule } from "../../models/tourSchedule.model";
+import { TourSchedule } from "../../models/tourSchedule/tourSchedule.model";
 import { toObjectIdMaybe } from "../../../../utils/mongo.util";
 
 const toDateMaybe = (v: unknown): Date | null => {
@@ -60,7 +60,7 @@ export const createTourSchedule = async (
     bookingDeadline?: unknown;
     notes?: unknown;
     status?: unknown;
-  }
+  },
 ) => {
   const tourObjectId = toObjectIdMaybe(tourId);
   if (!tourObjectId) {
@@ -133,7 +133,7 @@ export const updateTourScheduleById = async (
     bookingDeadline?: unknown;
     notes?: unknown;
     status?: unknown;
-  }
+  },
 ) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return { kind: "invalid_id" as const };
@@ -183,7 +183,10 @@ export const updateTourScheduleById = async (
 
     const adultPrice = toNumberMaybe(prices?.adult);
     if (adultPrice === null) {
-      return { kind: "validation_error" as const, message: "Missing prices.adult" };
+      return {
+        kind: "validation_error" as const,
+        message: "Missing prices.adult",
+      };
     }
 
     schedule.prices = {
@@ -196,18 +199,25 @@ export const updateTourScheduleById = async (
   if (payload.bookingDeadline !== undefined) {
     const d = toDateMaybe(payload.bookingDeadline);
     if (payload.bookingDeadline !== null && !d) {
-       return { kind: "validation_error" as const, message: "Invalid bookingDeadline" };
+      return {
+        kind: "validation_error" as const,
+        message: "Invalid bookingDeadline",
+      };
     }
     schedule.bookingDeadline = d ?? undefined;
   }
 
   if (payload.notes !== undefined) {
-    schedule.notes = typeof payload.notes === "string" ? payload.notes : undefined;
+    schedule.notes =
+      typeof payload.notes === "string" ? payload.notes : undefined;
   }
 
   if (payload.status !== undefined) {
     const validStatuses = ["open", "closed", "full", "cancelled"];
-    if (typeof payload.status !== "string" || !validStatuses.includes(payload.status)) {
+    if (
+      typeof payload.status !== "string" ||
+      !validStatuses.includes(payload.status)
+    ) {
       return { kind: "validation_error" as const, message: "Invalid status" };
     }
     schedule.status = payload.status;

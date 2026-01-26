@@ -51,7 +51,9 @@ export const update = async (req: Request, res: Response) => {
     const result = await tourService.updateTourById(id, {
       title: req.body?.title,
       thumbnail: req.body?.thumbnail,
+      thumbnailPublicId: req.body?.thumbnailPublicId,
       images: req.body?.images,
+      imagesPublicIds: req.body?.imagesPublicIds,
       description: req.body?.description,
       departureId: req.body?.departureId,
       destinationIds: req.body?.destinationIds,

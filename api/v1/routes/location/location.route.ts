@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import * as locationController from "../controller/locations/location.controller";
+import * as locationController from "../../controller/locations/location.controller";
 const router = express.Router();
 
 router.get("/deleted", locationController.listDeleted);

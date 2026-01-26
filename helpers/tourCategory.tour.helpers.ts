@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import tourCategoryModel from "../api/v1/models/tourCategory.model";
-import TopicTour from "../api/v1/models/topicTour.model";
-import Tour from "../api/v1/models/tour.model";
+import tourCategoryModel from "../api/v1/models/tourCategory/tourCategory.model";
+import TopicTour from "../api/v1/models/topicTour/topicTour.model";
+import Tour from "../api/v1/models/tour/tour.model";
 
 type TopicResolveResult =
   | {
@@ -37,7 +37,7 @@ export const buildIdCandidates = (id: any) => {
 
 export const resolveTopicTourBySlugs = async (
   tourCategory: any,
-  topicSlug: string
+  topicSlug: string,
 ): Promise<TopicResolveResult> => {
   const topicTour = await TopicTour.findOne({
     deleted: false,
@@ -72,7 +72,7 @@ export const resolveTopicTourBySlugs = async (
 
 export const resolveTopicTourDocBySlugs = async (
   tourCategory: any,
-  topicSlug: string
+  topicSlug: string,
 ) => {
   const resolved = await resolveTopicTourBySlugs(tourCategory, topicSlug);
 
@@ -110,10 +110,10 @@ export const mergeById = (items: any[]) => {
 
 export const listToursByTopicCandidates = async (
   topicTourIdCandidates: any[],
-  deleted: boolean
+  deleted: boolean,
 ) => {
   const objectIdCandidates = topicTourIdCandidates.filter(
-    (v) => typeof v !== "string"
+    (v) => typeof v !== "string",
   );
 
   const tours = await Tour.find({
@@ -136,7 +136,7 @@ export const listToursByTopicCandidates = async (
 export const findTourByIdInTopic = async (
   tourId: string,
   topicTourIdCandidates: any[],
-  deleted: boolean
+  deleted: boolean,
 ) => {
   const tourFromStringTopic = await Tour.collection.findOne({
     _id: new mongoose.Types.ObjectId(tourId) as any,
@@ -158,7 +158,11 @@ export const findTourByIdInTopic = async (
 export const applyTourUpdatePayload = (tour: any, payload: any) => {
   if (payload?.title !== undefined) tour.title = payload.title;
   if (payload?.thumbnail !== undefined) tour.thumbnail = payload.thumbnail;
+  if (payload?.thumbnailPublicId !== undefined)
+    tour.thumbnailPublicId = payload.thumbnailPublicId;
   if (payload?.images !== undefined) tour.images = payload.images;
+  if (payload?.imagesPublicIds !== undefined)
+    tour.imagesPublicIds = payload.imagesPublicIds;
   if (payload?.description !== undefined)
     tour.description = payload.description;
   if (payload?.departureId !== undefined)

@@ -1,5 +1,5 @@
-import TopicTour from "../../models/topicTour.model";
-import Location from "../../models/location.model";
+import TopicTour from "../../models/topicTour/topicTour.model";
+import Location from "../../models/location/location.model";
 import { toObjectIdMaybe } from "../../../../utils/mongo.util";
 
 export const loadTourRelations = async (tourObj: any) => {

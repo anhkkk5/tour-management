@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import * as tourService from "./tour.service";
-import Tour from "../../models/tour.model";
+import Tour from "../../models/tour/tour.model";
 import { loadTourRelations } from "./tour.relation.service";
 import { getTourSchedules } from "./tour.schedule.service";
 import { getTourPolicy } from "./tour.policy.service";
@@ -19,10 +19,14 @@ describe("Tour Service", () => {
   describe("getTourDetailBySlug", () => {
     it("should return ok with tour data when found", async () => {
       const mockTour = {
-        toObject: jest.fn().mockReturnValue({ _id: "tour1", slug: "test-tour" }),
+        toObject: jest
+          .fn()
+          .mockReturnValue({ _id: "tour1", slug: "test-tour" }),
       };
       (Tour.findOne as jest.Mock).mockResolvedValue(mockTour);
-      (loadTourRelations as jest.Mock).mockResolvedValue({ someRelation: true });
+      (loadTourRelations as jest.Mock).mockResolvedValue({
+        someRelation: true,
+      });
       (getTourSchedules as jest.Mock).mockResolvedValue([]);
       (getTourPolicy as jest.Mock).mockResolvedValue({});
 
@@ -35,7 +39,10 @@ describe("Tour Service", () => {
         schedules: [],
         policy: {},
       });
-      expect(Tour.findOne).toHaveBeenCalledWith({ deleted: false, slug: "test-tour" });
+      expect(Tour.findOne).toHaveBeenCalledWith({
+        deleted: false,
+        slug: "test-tour",
+      });
     });
 
     it("should return not_found when tour does not exist", async () => {
@@ -64,11 +71,16 @@ describe("Tour Service", () => {
     it("should return validation_error if title is empty string", async () => {
       (Tour.findOne as jest.Mock).mockResolvedValue({ _id: validId });
       const result = await tourService.updateTourById(validId, { title: "" });
-      expect(result).toEqual({ kind: "validation_error", message: "Missing title" });
+      expect(result).toEqual({
+        kind: "validation_error",
+        message: "Missing title",
+      });
     });
 
     it("should update simple fields correctly", async () => {
-      const mockSave = jest.fn().mockResolvedValue({ _id: validId, title: "New Title" });
+      const mockSave = jest
+        .fn()
+        .mockResolvedValue({ _id: validId, title: "New Title" });
       const mockTour = {
         _id: validId,
         title: "Old Title",
@@ -76,21 +88,31 @@ describe("Tour Service", () => {
       };
       (Tour.findOne as jest.Mock).mockResolvedValue(mockTour);
 
-      const result = await tourService.updateTourById(validId, { title: "New Title" });
+      const result = await tourService.updateTourById(validId, {
+        title: "New Title",
+      });
 
       expect(mockTour.title).toBe("New Title");
       expect(mockSave).toHaveBeenCalled();
-      expect(result).toEqual({ kind: "ok", tour: { _id: validId, title: "New Title" } });
+      expect(result).toEqual({
+        kind: "ok",
+        tour: { _id: validId, title: "New Title" },
+      });
     });
 
     it("should return validation_error for invalid departureId", async () => {
-        const mockTour = { _id: validId };
-        (Tour.findOne as jest.Mock).mockResolvedValue(mockTour);
-  
-        const result = await tourService.updateTourById(validId, { departureId: "invalid" });
-  
-        expect(result).toEqual({ kind: "validation_error", message: "Invalid departureId" });
+      const mockTour = { _id: validId };
+      (Tour.findOne as jest.Mock).mockResolvedValue(mockTour);
+
+      const result = await tourService.updateTourById(validId, {
+        departureId: "invalid",
       });
+
+      expect(result).toEqual({
+        kind: "validation_error",
+        message: "Invalid departureId",
+      });
+    });
 
     it("should handle duplicate slug error", async () => {
       const mockSave = jest.fn().mockRejectedValue({ code: 11000 });
@@ -100,7 +122,9 @@ describe("Tour Service", () => {
       };
       (Tour.findOne as jest.Mock).mockResolvedValue(mockTour);
 
-      const result = await tourService.updateTourById(validId, { title: "Duplicate" });
+      const result = await tourService.updateTourById(validId, {
+        title: "Duplicate",
+      });
 
       expect(result).toEqual({ kind: "duplicate_slug" });
     });

@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import tourCategoryModel from "../../models/tourCategory.model";
-import TopicTour from "../../models/topicTour.model";
+import tourCategoryModel from "../../models/tourCategory/tourCategory.model";
+import TopicTour from "../../models/topicTour/topicTour.model";
+import { deleteFromCloudinary } from "../../../../helpers/uploadToCloudinary";
 
 // [Get] api/v1/tourCategories/:slugTopicTour
 export const getTopicToursByCategorySlug = async (categorySlug: string) => {
@@ -40,7 +41,7 @@ export const getTopicToursByCategorySlug = async (categorySlug: string) => {
 
 // [Get] api/v1/tourCategories/:slugTopicTour/deleted
 export const getDeletedTopicToursByCategorySlug = async (
-  categorySlug: string
+  categorySlug: string,
 ) => {
   const tourCategory = await tourCategoryModel.findOne({
     deleted: false,
@@ -82,8 +83,9 @@ export const createTopicTour = async (
   payload: {
     title?: string;
     thumbnail?: string;
+    thumbnailPublicId?: string;
     description?: string;
-  }
+  },
 ) => {
   const tourCategory = await tourCategoryModel.findOne({
     deleted: false,
@@ -101,6 +103,7 @@ export const createTopicTour = async (
   const topicTour = new TopicTour({
     title: payload.title,
     thumbnail: payload.thumbnail,
+    thumbnailPublicId: payload.thumbnailPublicId,
     description: payload.description,
     tourCategoryId: tourCategory._id,
   });
@@ -119,8 +122,9 @@ export const updateTopicTourById = async (
   payload: {
     title?: string;
     thumbnail?: string;
+    thumbnailPublicId?: string;
     description?: string;
-  }
+  },
 ) => {
   if (!mongoose.Types.ObjectId.isValid(topicId)) {
     return { kind: "invalid_id" as const };
@@ -161,8 +165,19 @@ export const updateTopicTourById = async (
     return { kind: "validation_error" as const, message: "Missing title" };
   }
 
+  if (
+    payload.thumbnailPublicId !== undefined &&
+    payload.thumbnailPublicId &&
+    topicTour.thumbnailPublicId &&
+    payload.thumbnailPublicId !== topicTour.thumbnailPublicId
+  ) {
+    await deleteFromCloudinary(topicTour.thumbnailPublicId);
+  }
+
   if (payload?.title !== undefined) topicTour.title = payload.title;
   if (payload?.thumbnail !== undefined) topicTour.thumbnail = payload.thumbnail;
+  if (payload?.thumbnailPublicId !== undefined)
+    topicTour.thumbnailPublicId = payload.thumbnailPublicId;
   if (payload?.description !== undefined)
     topicTour.description = payload.description;
 
@@ -182,7 +197,7 @@ export const updateTopicTourById = async (
 // [Patch] api/v1/tourCategories/:slugTopicTour/:id
 export const softDeleteTopicTourById = async (
   categorySlug: string,
-  topicId: string
+  topicId: string,
 ) => {
   if (!mongoose.Types.ObjectId.isValid(topicId)) {
     return { kind: "invalid_id" as const };
@@ -233,7 +248,7 @@ export const softDeleteTopicTourById = async (
 // [Patch] api/v1/tourCategories/:slugTopicTour/:id
 export const restoreTopicTourById = async (
   categorySlug: string,
-  topicId: string
+  topicId: string,
 ) => {
   if (!mongoose.Types.ObjectId.isValid(topicId)) {
     return { kind: "invalid_id" as const };
@@ -286,7 +301,7 @@ export const bulkRestoreTopicToursById = async (
   categorySlug: string,
   payload: {
     ids?: string[];
-  }
+  },
 ) => {
   if (!Array.isArray(payload?.ids) || payload.ids.length === 0) {
     return {
@@ -308,7 +323,7 @@ export const bulkRestoreTopicToursById = async (
     payload.ids.map(async (id) => {
       const result = await restoreTopicTourById(categorySlug, id);
       return { id, ...result };
-    })
+    }),
   );
 
   return {
@@ -327,7 +342,7 @@ export const bulkUpdateTopicToursById = async (
       thumbnail?: string;
       description?: string;
     }>;
-  }
+  },
 ) => {
   if (!Array.isArray(payload?.updates) || payload.updates.length === 0) {
     return {
@@ -358,7 +373,7 @@ export const bulkUpdateTopicToursById = async (
       });
 
       return { id: u.id, ...result };
-    })
+    }),
   );
 
   return {
@@ -375,7 +390,7 @@ export const updateTopicTour = async (
     title?: string;
     thumbnail?: string;
     description?: string;
-  }
+  },
 ) => {
   const tourCategory = await tourCategoryModel.findOne({
     deleted: false,

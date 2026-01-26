@@ -18,7 +18,6 @@ export const createTourCategory = async (req: Request, res: Response) => {
   try {
     const result = await tourCategoryService.createTourCategory({
       title: req.body?.title,
-      thumbnail: req.body?.thumbnail,
       description: req.body?.description,
     });
 
@@ -51,7 +50,6 @@ export const updateTourCategory = async (req: Request, res: Response) => {
 
     const result = await tourCategoryService.updateTourCategoryById(id, {
       title: req.body?.title,
-      thumbnail: req.body?.thumbnail,
       description: req.body?.description,
     });
 
@@ -133,7 +131,7 @@ export const deleteTourCategory = async (req: Request, res: Response) => {
 
 export const listDeletedTourCategories = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   const tourCategories = await tourCategoryService.getDeletedTourCategories();
   return res.json({
@@ -172,7 +170,7 @@ export const restoreTourCategory = async (req: Request, res: Response) => {
 
 export const bulkRestoreTourCategories = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   try {
     const result = await tourCategoryService.bulkRestoreTourCategoriesById({

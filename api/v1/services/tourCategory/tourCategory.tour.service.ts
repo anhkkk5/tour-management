@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import Tour from "../../models/tour.model";
+import Tour from "../../models/tour/tour.model";
 import { createTourPolicy } from "../tours/tour.policy.crud.service";
 import { toObjectIdMaybe } from "../../../../utils/mongo.util";
+import { deleteFromCloudinary } from "../../../../helpers/uploadToCloudinary";
 
 import {
   applyTourUpdatePayload,
@@ -15,7 +16,7 @@ import {
 // [Get] api/v1/tourCategories/:slugTopicTour/:slugTour
 export const getToursByCategorySlugAndTopicSlug = async (
   categorySlug: string,
-  topicSlug: string
+  topicSlug: string,
 ) => {
   const tourCategory = await findTourCategoryBySlug(categorySlug);
 
@@ -31,7 +32,7 @@ export const getToursByCategorySlugAndTopicSlug = async (
 
   const tours = await listToursByTopicCandidates(
     resolved.topicTourIdCandidates,
-    false
+    false,
   );
 
   return {
@@ -42,7 +43,7 @@ export const getToursByCategorySlugAndTopicSlug = async (
 // [Get] api/v1/tourCategories/:slugTopicTour/:slugTour/deleted
 export const getDeletedToursByCategorySlugAndTopicSlug = async (
   categorySlug: string,
-  topicSlug: string
+  topicSlug: string,
 ) => {
   const tourCategory = await findTourCategoryBySlug(categorySlug);
 
@@ -58,7 +59,7 @@ export const getDeletedToursByCategorySlugAndTopicSlug = async (
 
   const tours = await listToursByTopicCandidates(
     resolved.topicTourIdCandidates,
-    true
+    true,
   );
 
   return {
@@ -74,7 +75,9 @@ export const createTour = async (
   payload: {
     title?: string;
     thumbnail?: string;
+    thumbnailPublicId?: string;
     images?: string[];
+    imagesPublicIds?: string[];
     description?: string;
     departureId?: unknown;
     destinationIds?: unknown;
@@ -93,7 +96,7 @@ export const createTour = async (
     };
     notes?: string;
     status?: "draft" | "published" | "hidden";
-  }
+  },
 ) => {
   if (!payload?.title) {
     return { kind: "validation_error" as const, message: "Missing title" };
@@ -155,13 +158,27 @@ export const createTour = async (
     payload?.images === undefined
       ? []
       : Array.isArray(payload.images) &&
-        payload.images.every((x) => typeof x === "string")
-      ? payload.images
-      : null;
+          payload.images.every((x) => typeof x === "string")
+        ? payload.images
+        : null;
   if (images === null) {
     return {
       kind: "validation_error" as const,
       message: "images must be an array of strings",
+    };
+  }
+
+  const imagesPublicIds =
+    payload?.imagesPublicIds === undefined
+      ? []
+      : Array.isArray(payload.imagesPublicIds) &&
+          payload.imagesPublicIds.every((x) => typeof x === "string")
+        ? payload.imagesPublicIds
+        : null;
+  if (imagesPublicIds === null) {
+    return {
+      kind: "validation_error" as const,
+      message: "imagesPublicIds must be an array of strings",
     };
   }
 
@@ -238,7 +255,7 @@ export const createTour = async (
 
   const topicResolved = await resolveTopicTourDocBySlugs(
     tourCategory,
-    topicSlug
+    topicSlug,
   );
 
   if (topicResolved.kind !== "ok") {
@@ -248,7 +265,9 @@ export const createTour = async (
   const tour = new Tour({
     title: payload.title,
     thumbnail: payload.thumbnail,
+    thumbnailPublicId: payload.thumbnailPublicId,
     images,
+    imagesPublicIds,
     description: payload.description,
     topicTourId: topicResolved.topicTour._id,
     departureId,
@@ -283,7 +302,9 @@ export const updateTourById = async (
   payload: {
     title?: string;
     thumbnail?: string;
+    thumbnailPublicId?: string;
     images?: string[];
+    imagesPublicIds?: string[];
     description?: string;
     departureId?: string;
     destinationIds?: string[];
@@ -300,7 +321,7 @@ export const updateTourById = async (
     cancellationPolicy?: string;
     notes?: string;
     status?: "draft" | "published" | "hidden";
-  }
+  },
 ) => {
   if (!mongoose.Types.ObjectId.isValid(tourId)) {
     return { kind: "invalid_id" as const };
@@ -321,11 +342,20 @@ export const updateTourById = async (
   const tour = await findTourByIdInTopic(
     tourId,
     topicResolved.topicTourIdCandidates,
-    false
+    false,
   );
 
   if (!tour) {
     return { kind: "tour_not_found" as const };
+  }
+
+  if (
+    payload.thumbnailPublicId !== undefined &&
+    payload.thumbnailPublicId &&
+    tour.thumbnailPublicId &&
+    payload.thumbnailPublicId !== tour.thumbnailPublicId
+  ) {
+    await deleteFromCloudinary(tour.thumbnailPublicId);
   }
 
   if (payload?.title !== undefined && !payload.title) {
@@ -349,7 +379,7 @@ export const updateTourById = async (
 export const softDeleteTourById = async (
   categorySlug: string,
   topicSlug: string,
-  tourId: string
+  tourId: string,
 ) => {
   if (!mongoose.Types.ObjectId.isValid(tourId)) {
     return { kind: "invalid_id" as const };
@@ -370,7 +400,7 @@ export const softDeleteTourById = async (
   const tour = await findTourByIdInTopic(
     tourId,
     topicResolved.topicTourIdCandidates,
-    false
+    false,
   );
 
   if (!tour) {
@@ -389,7 +419,7 @@ export const softDeleteTourById = async (
 export const restoreTourById = async (
   categorySlug: string,
   topicSlug: string,
-  tourId: string
+  tourId: string,
 ) => {
   if (!mongoose.Types.ObjectId.isValid(tourId)) {
     return { kind: "invalid_id" as const };
@@ -410,7 +440,7 @@ export const restoreTourById = async (
   const tour = await findTourByIdInTopic(
     tourId,
     topicResolved.topicTourIdCandidates,
-    true
+    true,
   );
 
   if (!tour || tour.deleted !== true) {
@@ -452,7 +482,7 @@ export const bulkUpdateToursById = async (
       notes?: string;
       status?: "draft" | "published" | "hidden";
     }>;
-  }
+  },
 ) => {
   if (!Array.isArray(payload?.updates) || payload.updates.length === 0) {
     return {
@@ -502,7 +532,7 @@ export const bulkUpdateToursById = async (
       });
 
       return { id: u.id, ...result };
-    })
+    }),
   );
 
   return { kind: "ok" as const, results };
@@ -514,7 +544,7 @@ export const bulkRestoreToursById = async (
   topicSlug: string,
   payload: {
     ids?: string[];
-  }
+  },
 ) => {
   if (!Array.isArray(payload?.ids) || payload.ids.length === 0) {
     return {
@@ -539,7 +569,7 @@ export const bulkRestoreToursById = async (
     payload.ids.map(async (id) => {
       const result = await restoreTourById(categorySlug, topicSlug, id);
       return { id, ...result };
-    })
+    }),
   );
 
   return { kind: "ok" as const, results };

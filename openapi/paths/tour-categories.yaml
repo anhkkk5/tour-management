@@ -57,9 +57,6 @@
               title:
                 type: string
                 example: Tour quốc tế
-              thumbnail:
-                type: string
-                example: https://example.com/thumb.png
               description:
                 type: string
                 example: Mô tả tour category
@@ -190,8 +187,6 @@
                       example: 6965108a3d85b8bec3471c36
                     title:
                       type: string
-                    thumbnail:
-                      type: string
                     description:
                       type: string
     responses:
@@ -267,8 +262,6 @@
             type: object
             properties:
               title:
-                type: string
-              thumbnail:
                 type: string
               description:
                 type: string
@@ -354,8 +347,6 @@
                       example: 6965108a3d85b8bec3471c36
                     title:
                       type: string
-                    thumbnail:
-                      type: string
                     description:
                       type: string
     responses:
@@ -437,6 +428,19 @@
                 type: string
               description:
                 type: string
+        multipart/form-data:
+          schema:
+            type: object
+            required:
+              - title
+            properties:
+              title:
+                type: string
+              thumbnail:
+                type: string
+                format: binary
+              description:
+                type: string
     responses:
       "200":
         description: OK
@@ -477,7 +481,7 @@
           type: string
         description: Id của TopicTour
     requestBody:
-      required: true
+      required: false
       content:
         application/json:
           schema:
@@ -487,6 +491,17 @@
                 type: string
               thumbnail:
                 type: string
+              description:
+                type: string
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              thumbnail:
+                type: string
+                format: binary
               description:
                 type: string
     responses:
@@ -870,7 +885,7 @@
           type: string
         description: Id của Tour
     requestBody:
-      required: true
+      required: false
       content:
         application/json:
           schema:
@@ -889,6 +904,18 @@
               status:
                 type: string
                 enum: [draft, published, hidden]
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              thumbnail:
+                type: string
+                format: binary
+              images:
+                type: array
+                items:
+                  type: string
+                  format: binary
     responses:
       "200":
         description: OK

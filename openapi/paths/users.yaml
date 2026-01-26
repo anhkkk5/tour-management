@@ -1,0 +1,23 @@
+/api/v1/users/detail:
+  get:
+    tags:
+      - Users
+    summary: Lấy thông tin người dùng (cần access token)
+    security:
+      - bearerAuth: []
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Lấy thông tin người dùng thành công
+                info:
+                  type: object

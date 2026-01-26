@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import locationModel from "../../models/location.model";
+import locationModel from "../../models/location/location.model";
 
 const isValidLocationType = (
-  value: unknown
+  value: unknown,
 ): value is "domestic" | "international" => {
   return value === "domestic" || value === "international";
 };
@@ -77,7 +77,7 @@ export const updateLocationById = async (
   payload: {
     name?: string;
     type?: string;
-  }
+  },
 ) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return { kind: "invalid_id" as const };

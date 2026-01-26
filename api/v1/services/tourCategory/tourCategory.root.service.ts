@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import tourCategoryModel from "../../models/tourCategory.model";
+import tourCategoryModel from "../../models/tourCategory/tourCategory.model";
 
 // [Get] api/v1/tourCategories
 export const listTourCategories = async () => {
@@ -11,7 +11,6 @@ export const listTourCategories = async () => {
 // [Post] api/v1/tour_category/create
 export const createTourCategory = async (payload: {
   title?: string;
-  thumbnail?: string;
   description?: string;
 }) => {
   if (!payload?.title) {
@@ -20,7 +19,6 @@ export const createTourCategory = async (payload: {
 
   const tourCategory = new tourCategoryModel({
     title: payload.title,
-    thumbnail: payload.thumbnail,
     description: payload.description,
   });
 
@@ -43,9 +41,8 @@ export const updateTourCategoryById = async (
   id: string,
   payload: {
     title?: string;
-    thumbnail?: string;
     description?: string;
-  }
+  },
 ) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return { kind: "invalid_id" as const };
@@ -65,8 +62,6 @@ export const updateTourCategoryById = async (
   }
 
   if (payload?.title !== undefined) tourCategory.title = payload.title;
-  if (payload?.thumbnail !== undefined)
-    tourCategory.thumbnail = payload.thumbnail;
   if (payload?.description !== undefined)
     tourCategory.description = payload.description;
 
@@ -89,7 +84,6 @@ export const bulkUpdateTourCategoriesById = async (payload: {
   updates?: Array<{
     id?: string;
     title?: string;
-    thumbnail?: string;
     description?: string;
   }>;
 }) => {
@@ -108,12 +102,11 @@ export const bulkUpdateTourCategoriesById = async (payload: {
 
       const result = await updateTourCategoryById(u.id, {
         title: u.title,
-        thumbnail: u.thumbnail,
         description: u.description,
       });
 
       return { id: u.id, ...result };
-    })
+    }),
   );
 
   return {
@@ -196,7 +189,7 @@ export const bulkRestoreTourCategoriesById = async (payload: {
     payload.ids.map(async (id) => {
       const result = await restoreTourCategoryById(id);
       return { id, ...result };
-    })
+    }),
   );
 
   return {

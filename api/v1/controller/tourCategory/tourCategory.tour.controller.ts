@@ -20,7 +20,7 @@ export const listTour = async (req: Request, res: Response) => {
 
   const result = await tourCategoryService.getToursByCategorySlugAndTopicSlug(
     slugTopicTour,
-    slugTour
+    slugTour,
   );
 
   if (result.kind === "category_not_found") {
@@ -52,7 +52,7 @@ export const listDeletedTours = async (req: Request, res: Response) => {
   const result =
     await tourCategoryService.getDeletedToursByCategorySlugAndTopicSlug(
       slugTopicTour,
-      slugTour
+      slugTour,
     );
 
   if (result.kind === "category_not_found") {
@@ -88,7 +88,9 @@ export const createTour = async (req: Request, res: Response) => {
       {
         title: req.body?.title,
         thumbnail: req.body?.thumbnail,
+        thumbnailPublicId: req.body?.thumbnailPublicId,
         images: req.body?.images,
+        imagesPublicIds: req.body?.imagesPublicIds,
         description: req.body?.description,
         departureId: req.body?.departureId,
         destinationIds: req.body?.destinationIds,
@@ -102,7 +104,7 @@ export const createTour = async (req: Request, res: Response) => {
         policy: req.body?.policy,
         notes: req.body?.notes,
         status: req.body?.status,
-      }
+      },
     );
 
     if (result.kind === "category_not_found") {
@@ -156,7 +158,9 @@ export const updateTour = async (req: Request, res: Response) => {
       {
         title: req.body?.title,
         thumbnail: req.body?.thumbnail,
+        thumbnailPublicId: req.body?.thumbnailPublicId,
         images: req.body?.images,
+        imagesPublicIds: req.body?.imagesPublicIds,
         description: req.body?.description,
         departureId: req.body?.departureId,
         destinationIds: req.body?.destinationIds,
@@ -173,7 +177,7 @@ export const updateTour = async (req: Request, res: Response) => {
         cancellationPolicy: req.body?.cancellationPolicy,
         notes: req.body?.notes,
         status: req.body?.status,
-      }
+      },
     );
 
     if (result.kind === "invalid_id") {
@@ -231,7 +235,7 @@ export const deleteTour = async (req: Request, res: Response) => {
     const result = await tourCategoryService.softDeleteTourById(
       slugTopicTour,
       slugTour,
-      id
+      id,
     );
 
     if (result.kind === "invalid_id") {
@@ -281,7 +285,7 @@ export const restoreTour = async (req: Request, res: Response) => {
     const result = await tourCategoryService.restoreTourById(
       slugTopicTour,
       slugTour,
-      id
+      id,
     );
 
     if (result.kind === "invalid_id") {
@@ -328,7 +332,7 @@ export const bulkUpdateTours = async (req: Request, res: Response) => {
       slugTour,
       {
         updates: req.body?.updates,
-      }
+      },
     );
 
     if (result.kind === "category_not_found") {
@@ -371,7 +375,7 @@ export const bulkRestoreTours = async (req: Request, res: Response) => {
       slugTour,
       {
         ids: req.body?.ids,
-      }
+      },
     );
 
     if (result.kind === "category_not_found") {

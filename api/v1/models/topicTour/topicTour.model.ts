@@ -7,6 +7,7 @@ const topicTourSchema = new Schema(
     title: { type: String, required: true },
     slug: { type: String, slug: "title", unique: true }, // Tự động tạo slug từ title
     thumbnail: String,
+    thumbnailPublicId: String,
     description: String,
     tourCategoryId: {
       type: Schema.Types.ObjectId,
@@ -21,7 +22,7 @@ const topicTourSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const TopicTour = mongoose.model("TopicTour", topicTourSchema, "topicTours");

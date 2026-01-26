@@ -7,7 +7,9 @@ const tourSchema = new Schema(
     title: { type: String, required: true },
     slug: { type: String, slug: "title", unique: true }, // Tự động tạo slug từ title
     thumbnail: String,
+    thumbnailPublicId: String,
     images: [String],
+    imagesPublicIds: [String],
     description: String,
     topicTourId: { type: Schema.Types.ObjectId, ref: "TopicTour" },
     departureId: { type: Schema.Types.ObjectId, ref: "Location" },
@@ -43,7 +45,7 @@ const tourSchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 tourSchema.index({ slug: 1 }, { unique: true });

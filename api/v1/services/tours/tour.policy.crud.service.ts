@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import TourPolicy from "../../models/tourPolicy.model";
+import TourPolicy from "../../models/tourPolicy/tourPolicy.model";
 
 const normalizeStringArray = (v: unknown): string[] | null | undefined => {
   if (v === undefined) return undefined;
@@ -71,7 +71,7 @@ export const updateTourPolicyById = async (
     excludedServices?: unknown;
     childPolicy?: unknown;
     cancellationPolicy?: unknown;
-  }
+  },
 ) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return { kind: "invalid_id" as const };

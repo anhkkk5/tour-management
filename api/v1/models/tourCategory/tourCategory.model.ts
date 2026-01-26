@@ -6,7 +6,6 @@ const tourCategorySchema = new Schema(
   {
     title: { type: String, required: true },
     slug: { type: String, slug: "title", unique: true }, // Tự động tạo slug từ title
-    thumbnail: String,
     description: String,
     deleted: {
       type: Boolean,
@@ -16,12 +15,12 @@ const tourCategorySchema = new Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const TourCategory = mongoose.model(
   "TourCategory",
   tourCategorySchema,
-  "tourCategories"
+  "tourCategories",
 );
 export default TourCategory;
