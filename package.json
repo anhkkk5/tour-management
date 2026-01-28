@@ -7,13 +7,12 @@
     "test": "jest",
     "build": "rimraf dist && tsc",
     "ts.check": "tsc --project tsconfig.json --noEmit",
-    "add-build": "git add dist",
-    "start": "nodemon index.ts"
+    "dev": "nodemon --watch \"**/*.ts\" --exec ts-node index.ts",
+    "start": "node dist/server.js"
   },
   "pre-commit": [
     "ts.check",
-    "build",
-    "add-build"
+    "build"
   ],
   "author": "",
   "license": "ISC",

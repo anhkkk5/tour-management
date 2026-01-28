@@ -1,30 +1,9 @@
 import { Request, Response } from "express";
 import * as authService from "../../services/auth/auth.service.deprecated";
-
-const getRefreshTtlSeconds = () => {
-  const raw = process.env.REFRESH_TOKEN_TTL_SECONDS;
-  if (!raw) return 7 * 24 * 60 * 60;
-  const n = Number(raw);
-  if (!Number.isFinite(n) || n <= 0) return 7 * 24 * 60 * 60;
-  return n;
-};
-
-const getCookieOptions = () => {
-  const isProd = process.env.NODE_ENV === "production";
-  return {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: "lax" as const,
-    path: "/",
-    maxAge: getRefreshTtlSeconds() * 1000,
-  };
-};
-
-const getClientIp = (req: Request) => {
-  const xf = req.headers["x-forwarded-for"];
-  if (typeof xf === "string") return xf.split(",")[0].trim();
-  return req.ip;
-};
+import {
+  getClientIp,
+  getRefreshCookieOptions,
+} from "../../../../utils/auth.http";
 
 export const register = async (req: Request, res: Response) => {
   const isProd = process.env.NODE_ENV === "production";
@@ -106,7 +85,7 @@ export const verifyRegisterOtp = async (req: Request, res: Response) => {
     });
   }
 
-  res.cookie("refreshToken", result.refreshToken, getCookieOptions());
+  res.cookie("refreshToken", result.refreshToken, getRefreshCookieOptions());
 
   return res.json({
     code: 200,
@@ -151,7 +130,7 @@ export const login = async (req: Request, res: Response) => {
     });
   }
 
-  res.cookie("refreshToken", result.refreshToken, getCookieOptions());
+  res.cookie("refreshToken", result.refreshToken, getRefreshCookieOptions());
 
   return res.json({
     code: 200,
@@ -189,7 +168,7 @@ export const refresh = async (req: Request, res: Response) => {
     });
   }
 
-  res.cookie("refreshToken", result.refreshToken, getCookieOptions());
+  res.cookie("refreshToken", result.refreshToken, getRefreshCookieOptions());
 
   return res.json({
     code: 200,
