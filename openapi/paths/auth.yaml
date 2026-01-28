@@ -2,7 +2,7 @@
   post:
     tags:
       - Auth
-    summary: Đăng ký tài khoản
+    summary: Đăng ký tài khoản (gửi OTP, chưa tạo user trong DB)
     requestBody:
       required: true
       content:
@@ -28,6 +28,168 @@
     responses:
       "200":
         description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: OTP sent
+                email:
+                  type: string
+                otp:
+                  type: string
+                  example: "123456"
+                  description: Chỉ trả về ở môi trường dev (NODE_ENV != production)
+                expiresInSeconds:
+                  type: integer
+                  example: 300
+
+/api/v1/auth/reset-password/verify-otp:
+  post:
+    tags:
+      - Auth
+    summary: Quên mật khẩu - xác thực OTP để lấy resetToken
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - otp
+            properties:
+              email:
+                type: string
+                example: test1@gmail.com
+              otp:
+                type: string
+                example: "123456"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Verify OTP success
+                resetToken:
+                  type: string
+                expiresInSeconds:
+                  type: integer
+                  example: 300
+
+/api/v1/auth/reset-password/request-otp:
+  post:
+    tags:
+      - Auth
+    summary: Quên mật khẩu - gửi OTP về email
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                example: test1@gmail.com
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: OTP sent
+                email:
+                  type: string
+                otp:
+                  type: string
+                  example: "123456"
+                  description: Chỉ trả về ở môi trường dev (NODE_ENV != production)
+                expiresInSeconds:
+                  type: integer
+                  example: 300
+
+/api/v1/auth/reset-password:
+  post:
+    tags:
+      - Auth
+    summary: Quên mật khẩu - dùng resetToken để đổi mật khẩu
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - resetToken
+              - newPassword
+            properties:
+              resetToken:
+                type: string
+              newPassword:
+                type: string
+                example: "newStrongPassword123"
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: Reset password success
+
+/api/v1/auth/register/verify-otp:
+  post:
+    tags:
+      - Auth
+    summary: Xác thực OTP đăng ký (tạo user trong DB + trả token)
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - otp
+            properties:
+              email:
+                type: string
+                example: test1@gmail.com
+              otp:
+                type: string
+                example: "123456"
+    responses:
+      "200":
+        description: OK
         headers:
           Set-Cookie:
             schema:
@@ -48,6 +210,47 @@
                   type: string
                 user:
                   type: object
+
+/api/v1/auth/register/resend-otp:
+  post:
+    tags:
+      - Auth
+    summary: Gửi lại OTP đăng ký (khi OTP hết hạn/chưa nhập OTP)
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                example: test1@gmail.com
+    responses:
+      "200":
+        description: OK
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  example: 200
+                message:
+                  type: string
+                  example: OTP resent
+                email:
+                  type: string
+                otp:
+                  type: string
+                  example: "123456"
+                  description: Chỉ trả về ở môi trường dev (NODE_ENV != production)
+                expiresInSeconds:
+                  type: integer
+                  example: 300
 
 /api/v1/auth/login:
   post:
@@ -140,7 +343,7 @@
   post:
     tags:
       - Auth
-    summary: Tạo OTP (cần access token)
+    summary: Tạo OTP xác thực email cho user đã đăng nhập (cần access token)
     security:
       - bearerAuth: []
     responses:
@@ -168,7 +371,7 @@
   post:
     tags:
       - Auth
-    summary: Xác thực OTP (cần access token)
+    summary: Xác thực OTP email cho user đã đăng nhập (cần access token)
     security:
       - bearerAuth: []
     requestBody:

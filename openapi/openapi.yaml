@@ -13,6 +13,16 @@ components:
 paths:
   /api/v1/auth/register:
     $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1register
+  /api/v1/auth/register/verify-otp:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1register~1verify-otp
+  /api/v1/auth/register/resend-otp:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1register~1resend-otp
+  /api/v1/auth/reset-password/request-otp:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1reset-password~1request-otp
+  /api/v1/auth/reset-password/verify-otp:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1reset-password~1verify-otp
+  /api/v1/auth/reset-password:
+    $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1reset-password
   /api/v1/auth/login:
     $ref: ./paths/auth.yaml#/~1api~1v1~1auth~1login
   /api/v1/auth/refresh:
